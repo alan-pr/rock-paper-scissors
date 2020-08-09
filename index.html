@@ -1,0 +1,92 @@
+<style>
+    body {
+        color: gray;
+        background-color: black;
+    }
+</style>
+<body>
+    <h1>Rock, Paper, Scissors</h1>
+    <label for="game">Pick: rock, paper or scissors</label><br>
+    <input id="choice"> <input id="btn" value="Pick!" type="button"><br><br>
+    <section id="log"></section>
+    <section id="scores">
+        Your Score: <span id="player_score"></span><br>
+        Computer Score: <span id="computer_score"></span>
+    </section>
+</body>
+<script>
+    const btn = document.getElementById('btn');
+    let player_score = 0;
+    let comp_score = 0;
+
+    function computerPlay() {
+        let options = ['paper', 'rock', 'scissors'];
+
+        return options[randomPick()];
+    }
+
+    function randomPick() {
+        return Math.floor(Math.random()*3);
+    }
+
+    function score(player_score, comp_score) {
+        document.getElementById('player_score').textContent = player_score;
+        document.getElementById('computer_score').textContent = comp_score;
+    }
+
+    function playRound(player, comp) {
+        let str1 = `Player picked: ${player}`;
+        let str2 = `Computer picked: ${comp}`;
+        let str3, str4;
+  
+        if (player == comp) {
+            str3 = 'Is a draw!';
+            str4 = '';
+        } else if ((player == 'rock' && comp == 'scissors') || (player == 'paper' && comp == 'rock') || (player == 'scissors' && comp == 'paper')) {
+            str3 = `${player} beats ${comp}.`;
+            str4 = 'You are the winner!';
+            player_score += 5;
+        } else {
+            str3 = `${comp} beats ${player}.`;
+            str4 = 'Computer is the winner!';
+            comp_score += 5;
+        }
+
+        const para = document.createElement('p');
+        const log = document.getElementById('log');
+        let br, txtNode;
+        
+        if (log.lastChild != null) log.removeChild(log.lastChild);
+        txtNode = document.createTextNode(str1);
+        para.appendChild(txtNode);
+        br = document.createElement('br');
+        para.appendChild(br);
+
+        txtNode = document.createTextNode(str2);
+        para.appendChild(txtNode);
+        br = document.createElement('br');
+        para.appendChild(br);
+
+        txtNode = document.createTextNode(str3);
+        para.appendChild(txtNode);
+        br = document.createElement('br');
+        para.appendChild(br);
+
+        txtNode = document.createTextNode(str4);
+        para.appendChild(txtNode);
+        br = document.createElement('br');
+        para.appendChild(br);
+
+        log.appendChild(para);
+        document.body.appendChild(log);
+
+        score(player_score, comp_score);
+    }
+
+    btn.onclick = () => {
+        const playerSelection = document.getElementById('choice').value;
+        const compSelection = computerPlay();
+
+        playRound(playerSelection, compSelection);
+    }
+</script>
