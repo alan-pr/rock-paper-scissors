@@ -4,6 +4,7 @@
         background-color: black;
     }
 </style>
+
 <body>
     <h1>Rock, Paper, Scissors</h1>
     <label for="game">Pick: rock, paper or scissors</label><br>
@@ -26,7 +27,7 @@
     }
 
     function randomPick() {
-        return Math.floor(Math.random()*3);
+        return Math.floor(Math.random() * 3);
     }
 
     function score(player_score, comp_score) {
@@ -38,7 +39,7 @@
         let str1 = `Player picked: ${player}`;
         let str2 = `Computer picked: ${comp}`;
         let str3, str4;
-  
+
         if (player == comp) {
             str3 = 'Is a draw!';
             str4 = '';
@@ -55,7 +56,7 @@
         const para = document.createElement('p');
         const log = document.getElementById('log');
         let br, txtNode;
-        
+
         if (log.lastChild != null) log.removeChild(log.lastChild);
         txtNode = document.createTextNode(str1);
         para.appendChild(txtNode);
@@ -77,10 +78,7 @@
         br = document.createElement('br');
         para.appendChild(br);
 
-        log.appendChild(para);
-        document.body.appendChild(log);
-
-        score(player_score, comp_score);
+        log.appendChild(para);        //alert(playerSelection);
     }
 
     btn.onclick = () => {
