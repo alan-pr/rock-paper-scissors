@@ -35,6 +35,20 @@
         document.getElementById('computer_score').textContent = comp_score;
     }
 
+    function showInputError() {
+        const para = document.createElement('p');
+        const log = document.getElementById('log');
+        let br, txtNode;
+
+        if (log.lastChild != null) log.removeChild(log.lastChild);
+        txtNode = document.createTextNode('Please enter the correct word.');
+        para.appendChild(txtNode);
+        //br = document.createElement('br');
+        //para.appendChild(br);
+
+        log.appendChild(para);
+    }
+
     function playRound(player, comp) {
         let str1 = `Player picked: ${player}`;
         let str2 = `Computer picked: ${comp}`;
@@ -43,7 +57,7 @@
         if (player == comp) {
             str3 = 'Is a draw!';
             str4 = '';
-        } else if ((player == 'rock' && comp == 'scissors') || (player == 'paper' && comp == 'rock') || (player == 'scissors' && comp == 'paper')) {
+        } else if ((player == 'rock' && comp == 'scissors') || (player == 'paper' && comp == 'rock') || (player == 'scissors' &&        comp == 'paper')) {
             str3 = `${player} beats ${comp}.`;
             str4 = 'You are the winner!';
             player_score += 5;
@@ -55,6 +69,8 @@
 
         const para = document.createElement('p');
         const log = document.getElementById('log');
+        const p_score = document.getElementById('player_score');
+        const c_score = document.getElementById('computer_score');
         let br, txtNode;
 
         if (log.lastChild != null) log.removeChild(log.lastChild);
@@ -78,13 +94,19 @@
         br = document.createElement('br');
         para.appendChild(br);
 
-        log.appendChild(para);        //alert(playerSelection);
+        log.appendChild(para);
+        p_score.textContent = player_score;
+        c_score.textContent = comp_score;
     }
 
     btn.onclick = () => {
         const playerSelection = document.getElementById('choice').value;
         const compSelection = computerPlay();
 
-        playRound(playerSelection, compSelection);
+        if (playerSelection != 'rock' && playerSelection != 'paper' && playerSelection != 'scissors') {
+            showInputError();
+        } else {
+            playRound(playerSelection, compSelection);
+        }
     }
 </script>
