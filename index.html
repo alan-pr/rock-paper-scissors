@@ -1,112 +1,323 @@
+<link href="styles/reset.css" rel="stylesheet" type="text/css"> 
 <style>
+    * {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+
     body {
-        color: gray;
-        background-color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: gray;
+    }
+
+    .container {
+        position: relative;
+        display: grid;
+
+        width: 300px;
+        height: 500px;
+
+        grid-template-columns: repeat(3, 100px);
+        grid-template-rows: 200px repeat(3, 100px);
+        gap: 25px;
+    }
+
+    .top-container {
+        display: grid;
+
+        grid-template-columns: 300px;
+        grid-template-rows: repeat(2, 100px);
+
+        grid-column-start: 1;
+        grid-column-end: end;
+        grid-row-start: 1;
+        grid-row-end: 2;
+    }
+
+    .score-container {
+        display: flex;
+        align-items: center;
+        height: 50px;
+
+        grid-column-start: 1;
+        grid-column-end: end;
+        grid-row-start: 1;
+        grid-row-end: 2;
+
+        color: rgb(241, 169, 35);
+        font-family: monospace;
+        background-color: rgb(28, 46, 46);
+        border: 3px solid black;
+        border-radius: 15px;
+    }
+
+    .player-score {
+        flex: 1;
+        flex-basis: 150px;
+    }
+
+    .comp-score {
+        flex: 2;
+        flex-basis: 150px;
+    }
+
+    .next-round {
+        position: relative;
+        width: 90px;
+        height: 50px;
+
+        margin: 10px auto;
+        margin-right: -60px;
+        padding-top: 12px;
+        padding-left: 3px;
+
+        background-color: darkslategray;
+        border: 3px solid black;
+        border-radius: 5px;
+
+        transition: all 0.2s ease;
+    }
+
+    .output {
+        margin-top: 50px;
+        height: 100px;
+
+        grid-column-start: 1;
+        grid-column-end: 4;
+        grid-row-start: 4;
+        grid-row-end: 5;
+
+        color: rgb(241, 169, 35);
+        font-family: monospace;
+        background-color: rgb(28, 46, 46);;
+        border: 5px solid black;
+        border-radius: 10px;
+    }
+
+    .box {
+        display: flex;
+        background-color: darkslategray;
+        border: 3px solid black;
+        border-radius: 10px;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .hover {
+        background-color: rgb(28, 49, 49);
+        transform: scale(1.2);
+        color: rgb(241, 169, 35);
+    }
+
+    .winner {
+        transition: all 0.1s ease;
+        background-color: limegreen;
+        border: 5px none;
+        box-shadow: 0 0 5px 3px yellow;
+        transform: scale(1);
+    }
+
+    .looser {
+        transition: all 0.1s ease;
+        background-color: red;
+        border: 5px solid black;
+        box-shadow: 0 0 5px 3px yellow;
+        transform: scale(1);
+    }
+
+    .draw {
+        transition: all 0.1s ease;
+        background-color: yellow;
+        border: 5px solid yellowgreen;
+        box-shadow: 0 0 5px 3px yellow;
+        transform: scale(1);
+    }
+
+    .box-1 {
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 2;
+        grid-row-end: 3;
+    }
+
+    .box-2 {
+        grid-column-start: 1;
+        grid-column-end: 2;
+        grid-row-start: 3;
+        grid-row-end: 4;
+    }
+
+    .box-3 {
+        grid-column-start: 3;
+        grid-column-end: 4;
+        grid-row-start: 3;
+        grid-row-end: 4;
+    }
+
+    #player-score, #comp-score {
+        display: inline;
     }
 </style>
-
 <body>
-    <h1>Rock, Paper, Scissors</h1>
-    <label for="game">Pick: rock, paper or scissors</label><br>
-    <input id="choice"> <input id="btn" value="Pick!" type="button"><br><br>
-    <section id="log"></section>
-    <section id="scores">
-        Your Score: <span id="player_score"></span><br>
-        Computer Score: <span id="computer_score"></span>
-    </section>
+    <div class="container">
+        <div class="top-container">
+            <div class="score-container">
+                <div class="player-score">
+                    Player: 
+                    <p id="player-score">0</p>
+                </div>
+                <div class="comp-score">
+                    Computer: 
+                    <p id="comp-score">0</p>
+                </div>
+            </div>
+            <div class="next-round">Next round</div>
+        </div>
+        <div class="box box-1" data-sel="rock">
+            Rock
+        </div>
+        <div class="box box-2" data-sel="paper">
+            Paper
+        </div>
+        <div class="box box-3" data-sel="scissors">
+            Scissors
+        </div>
+        <div class="output">
+
+        </div>
+    </div>
 </body>
 <script>
-    const btn = document.getElementById('btn');
-    let player_score = 0;
-    let comp_score = 0;
+    let pause = false;
+    let playerSelection, compSelection;
+    let arrayResults = {player: 0, comp: 0, msg: ''};
+    let selections = ['rock', 'paper', 'scissors'];
 
-    function computerPlay() {
-        let options = ['paper', 'rock', 'scissors'];
 
-        return options[randomPick()];
+    function resetButtons() {
+        buttons.forEach(button => {
+            button.classList.remove('winner');
+            button.classList.remove('looser');
+            button.classList.remove('draw');
+        })
+
+        assignMsg('');
     }
 
-    function randomPick() {
-        return Math.floor(Math.random() * 3);
+
+    function assignMsg(msg) {
+        const output = document.querySelector('.output');
+
+        output.innerText = msg;
     }
 
-    function score(player_score, comp_score) {
-        document.getElementById('player_score').textContent = player_score;
-        document.getElementById('computer_score').textContent = comp_score;
+
+    function assignScore(target) {
+        const score = document.getElementById(`${target}-score`);
+
+        arrayResults[`${target}`]++;
+        score.textContent = arrayResults[`${target}`];
     }
 
-    function showInputError() {
-        const para = document.createElement('p');
-        const log = document.getElementById('log');
-        let br, txtNode;
 
-        if (log.lastChild != null) log.removeChild(log.lastChild);
-        txtNode = document.createTextNode('Please enter the correct word.');
-        para.appendChild(txtNode);
-        //br = document.createElement('br');
-        //para.appendChild(br);
+    function playRound(e) {
+        let msg = '';
+        let playerScore = 0;
+        let compScore = 0;
 
-        log.appendChild(para);
-    }
+        playerSelection = e.target.getAttribute('data-sel');
+        compSelection = selections[Math.floor(Math.random()*3)];
 
-    function playRound(player, comp) {
-        let str1 = `Player picked: ${player}`;
-        let str2 = `Computer picked: ${comp}`;
-        let str3, str4;
-
-        if (player == comp) {
-            str3 = 'Is a draw!';
-            str4 = '';
-        } else if ((player == 'rock' && comp == 'scissors') || (player == 'paper' && comp == 'rock') || (player == 'scissors' &&        comp == 'paper')) {
-            str3 = `${player} beats ${comp}.`;
-            str4 = 'You are the winner!';
-            player_score += 5;
-        } else {
-            str3 = `${comp} beats ${player}.`;
-            str4 = 'Computer is the winner!';
-            comp_score += 5;
+        if (playerSelection == compSelection) {
+            e.target.classList.add('draw');
+            msg += `Is a draw!`;
         }
-
-        const para = document.createElement('p');
-        const log = document.getElementById('log');
-        const p_score = document.getElementById('player_score');
-        const c_score = document.getElementById('computer_score');
-        let br, txtNode;
-
-        if (log.lastChild != null) log.removeChild(log.lastChild);
-        txtNode = document.createTextNode(str1);
-        para.appendChild(txtNode);
-        br = document.createElement('br');
-        para.appendChild(br);
-
-        txtNode = document.createTextNode(str2);
-        para.appendChild(txtNode);
-        br = document.createElement('br');
-        para.appendChild(br);
-
-        txtNode = document.createTextNode(str3);
-        para.appendChild(txtNode);
-        br = document.createElement('br');
-        para.appendChild(br);
-
-        txtNode = document.createTextNode(str4);
-        para.appendChild(txtNode);
-        br = document.createElement('br');
-        para.appendChild(br);
-
-        log.appendChild(para);
-        p_score.textContent = player_score;
-        c_score.textContent = comp_score;
-    }
-
-    btn.onclick = () => {
-        const playerSelection = document.getElementById('choice').value;
-        const compSelection = computerPlay();
-
-        if (playerSelection != 'rock' && playerSelection != 'paper' && playerSelection != 'scissors') {
-            showInputError();
-        } else {
-            playRound(playerSelection, compSelection);
+        else if (playerSelection == 'rock') {
+            if (compSelection == 'scissors') {
+                const compButton = document.querySelector(`div[data-sel=${compSelection}]`);
+                e.target.classList.add('winner');
+                compButton.classList.add('looser');
+                msg += `Player wins this round! Player gets 1pt.\nRock beats Scissors.`;
+                assignScore('player');
+            } else {
+                const compButton = document.querySelector(`div[data-sel=${compSelection}]`);
+                e.target.classList.add('looser');
+                compButton.classList.add('winner');
+                msg += `Computer wins this round! Computer gets 1pt.\nPaper beats Rock.`;
+                assignScore('comp');
+            }
+        } else if (playerSelection == 'paper') {
+            if (compSelection == 'rock') {
+                const compButton = document.querySelector(`div[data-sel=${compSelection}]`);
+                e.target.classList.add('winner');
+                compButton.classList.add('looser');
+                msg += `Player wins this round! Player gets 1pt.\nPaper beats Rock.`;
+                assignScore('player');
+            } else {
+                const compButton = document.querySelector(`div[data-sel=${compSelection}]`);
+                e.target.classList.add('looser');
+                compButton.classList.add('winner');
+                msg += `Computer wins this round! Computer gets 1pt.\nScissors beats Paper.`;
+                assignScore('comp');
+            }
+        } else if (playerSelection == 'scissors') {
+            if (compSelection == 'paper') {
+                const compButton = document.querySelector(`div[data-sel=${compSelection}]`);
+                e.target.classList.add('winner');
+                compButton.classList.add('looser');
+                msg += `Player wins this round! Player gets 1pt.\nScissors beats Paper.`;
+                assignScore('player');
+            } else {
+                const compButton = document.querySelector(`div[data-sel=${compSelection}]`);
+                e.target.classList.add('looser');
+                compButton.classList.add('winner');
+                msg += `Computer wins this round! Computer gets 1pt.\nRock beats Scissors.`;
+                assignScore('comp');
+            }
         }
+        arrayResults = {player: arrayResults['player']+playerScore, comp: arrayResults['comp']+compScore, msg: msg};
+        return arrayResults;
     }
+
+
+    const buttons = document.querySelectorAll('.box');
+    const nextRoundButton = document.querySelector('.next-round');
+
+    buttons.forEach(button => {
+        console.log(pause);
+        button.addEventListener('mouseover', (e) => {
+            e.target.classList.add('hover');
+            console.log(pause)
+        });
+
+        button.addEventListener('mouseout', (e) => {
+            e.target.classList.remove('hover');
+        });
+
+        button.addEventListener('click', (e) => {
+            if (!pause) {
+                arrayResults = playRound(e);
+                assignMsg(arrayResults['msg']);
+            }
+            pause = true;
+        });
+    })
+
+    nextRoundButton.addEventListener('mouseover', (e) => {
+        e.target.classList.add('hover');
+    });
+
+    nextRoundButton.addEventListener('mouseout', (e) => {
+        e.target.classList.remove('hover');
+    });
+
+    nextRoundButton.addEventListener('click', (e) => {
+        resetButtons();
+        pause = false;
+    });
+    
 </script>
